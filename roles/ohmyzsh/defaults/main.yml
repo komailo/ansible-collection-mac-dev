@@ -1,0 +1,7 @@
+---
+# internal variables
+ohmyzsh_install_dir: "{{ ansible_user_dir }}/.oh-my-zsh"
+ohmyzsh_repo: "https://github.com/ohmyzsh/ohmyzsh.git"
+
+ohmyzsh_d_dir: "{{ ansible_user_dir }}/.zshrc.d/ansible-managed"
+ohmyzsh_snippet_filename: "20-oh-my-zsh.zsh"

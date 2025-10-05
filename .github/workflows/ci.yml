@@ -1,0 +1,96 @@
+---
+name: CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: "0 6 * * 1"
+
+jobs:
+  sanity:
+    name: Sanity (Ⓐ${{ matrix.ansible }})
+    strategy:
+      matrix:
+        ansible:
+          - stable-2.12
+          - stable-2.13
+          - stable-2.14
+          - devel
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          path: ansible_collections/devenv/mac_dev
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install ansible-base (${{ matrix.ansible }})
+        run: pip install https://github.com/ansible/ansible/archive/${{ matrix.ansible }}.tar.gz --disable-pip-version-check
+
+      - name: Run sanity tests
+        run: ansible-test sanity --docker -v --color
+        working-directory: ./ansible_collections/devenv/mac_dev
+
+  integration:
+    name: Integration (Ⓐ${{ matrix.ansible }})
+    strategy:
+      matrix:
+        ansible:
+          - stable-2.12
+          - stable-2.13
+          - stable-2.14
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          path: ansible_collections/devenv/mac_dev
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install ansible-base (${{ matrix.ansible }})
+        run: pip install https://github.com/ansible/ansible/archive/${{ matrix.ansible }}.tar.gz --disable-pip-version-check
+
+      - name: Run integration tests
+        run: ansible-test integration --docker -v --color --retry-on-error --continue-on-error --diff
+        working-directory: ./ansible_collections/devenv/mac_dev
+
+  galaxy:
+    name: Galaxy Import
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs:
+      - sanity
+      - integration
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          path: ansible_collections/devenv/mac_dev
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install ansible-base (devel)
+        run: pip install https://github.com/ansible/ansible/archive/devel.tar.gz --disable-pip-version-check
+
+      - name: Build collection
+        run: ansible-galaxy collection build
+        working-directory: ./ansible_collections/devenv/mac_dev
+
+      - name: Install collection
+        run: ansible-galaxy collection install *.tar.gz
+        working-directory: ./ansible_collections/devenv/mac_dev

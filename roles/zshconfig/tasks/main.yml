@@ -1,0 +1,74 @@
+---
+- name: Set default shell to zsh for user
+  ansible.builtin.user:
+    name: "{{ ansible_user_id }}"
+    shell: "{{ zsh_path }}"
+  when: zshconfig_set_default_shell
+  become: true
+
+- name: Ensure zshrc.d directory exists
+  ansible.builtin.file:
+    path: "{{ zsh_rc_d_dir }}"
+    state: directory
+    mode: "0700"
+
+- name: Ensure ansible-managed zshrc.d directory exists
+  ansible.builtin.file:
+    path: "{{ zsh_rc_d_ansible_managed_dir }}"
+    state: directory
+    mode: "0700"
+
+- name: Find template files in role zshrc.d directory
+  ansible.builtin.find:
+    paths: "{{ role_path }}/templates/zshrc.d"
+    patterns: "*.zsh.j2"
+  register: zsh_template_files
+  delegate_to: localhost
+  run_once: true
+
+- name: Create list of expected files in ansible-managed directory
+  ansible.builtin.set_fact:
+    expected_zsh_files: >-
+      {{
+        zsh_template_files.files |
+        map(attribute='path') |
+        map('basename') |
+        map('regex_replace', '\.zsh\.j2$', '.zsh') |
+        list
+      }}
+
+- name: Find existing files in ansible-managed directory
+  ansible.builtin.find:
+    paths: "{{ zsh_rc_d_ansible_managed_dir }}"
+    patterns: "*.zsh"
+  register: existing_ansible_managed_zsh_files
+
+- name: Create combined list of files to preserve
+  ansible.builtin.set_fact:
+    files_to_preserve: >-
+      {{
+        expected_zsh_files + configure_zshconfig_preserve_files
+      }}
+
+- name: Remove files not managed by this role (excluding preserved files)
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ existing_ansible_managed_zsh_files.files }}"
+  when:
+    - item.path | basename not in files_to_preserve
+    - item.path | basename not in configure_zshconfig_preserve_files
+
+- name: Template zsh configuration files to ansible-managed directory
+  ansible.builtin.template:
+    src: "zshrc.d/{{ item | basename | regex_replace('\\.zsh$', '.zsh.j2') }}"
+    dest: "{{ zsh_rc_d_ansible_managed_dir }}/{{ item }}"
+    mode: "0644"
+  loop: "{{ expected_zsh_files }}"
+
+- name: Create .zshrc from template
+  ansible.builtin.template:
+    src: zshrc.j2
+    dest: "{{ zsh_rc_path }}"
+    mode: "0644"
+    backup: yes

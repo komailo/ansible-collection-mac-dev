@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+# Example aliases configuration
+
+{% if configure_zshconfig_aliases %}
+{% for alias, command in zshconfig_aliases.items() %}
+alias {{ alias }}='{{ command }}'
+{% endfor %}
+{% endif %}
+

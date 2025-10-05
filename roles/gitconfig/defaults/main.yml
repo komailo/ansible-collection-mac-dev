@@ -1,0 +1,13 @@
+---
+gitconfig_user_name: "{{ ansible_user_id }}"
+gitconfig_user_email: "{{ ansible_user_id }}@{{ ansible_hostname }}.local"
+gitconfig_signingkey: "/Users/kkanjee/.ssh/id_rsa"
+gitconfig_signingkey_format: "gpg"
+gitconfig_init_defaultBranch: "main"
+gitconfig_push_autoSetupRemote: true
+gitconfig_aliases: {}
+# Example:
+# gitconfig_aliases:
+#   co: "checkout"
+#   br: "branch"
+#   ci: "commit"

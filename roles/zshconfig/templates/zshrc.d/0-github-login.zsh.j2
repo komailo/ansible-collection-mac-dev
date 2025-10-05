@@ -1,0 +1,18 @@
+{% if zshconfig_github_login %}
+# if gh command does not exist skip
+if ! command -v gh &> /dev/null; then
+  return
+fi
+
+GITHUB_TOKEN=$(gh auth token 2>/dev/null)
+
+if [ -z "$GITHUB_TOKEN" ]; then
+  echo "** Logging in to GitHub..." 
+  gh auth login
+  GITHUB_TOKEN=$(gh auth token)
+else
+    echo "** Already logged in to GitHub. To login again, run 'gh auth login'"
+fi
+
+export GITHUB_TOKEN
+{% endif %}

@@ -1,0 +1,12 @@
+---
+title: Collection Changelog
+description: Changelog for the komailo.dev-env Ansible collection
+
+releases:
+  1.0.0:
+    release_date: "2025-10-04"
+    changes:
+      release_summary: Initial release of the collection
+      major_changes:
+        - Initial collection structure
+        - Basic roles and modules for Mac development environment setup

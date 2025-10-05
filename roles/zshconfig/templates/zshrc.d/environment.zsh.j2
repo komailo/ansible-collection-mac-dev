@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+# Environment variables configuration
+
+# Set default editor
+export EDITOR=vim
+
+# History configuration
+export HISTSIZE=10000
+export SAVEHIST=10000
+export HISTFILE=~/.zsh_history
+
+# Enable history sharing between sessions
+setopt SHARE_HISTORY
+setopt HIST_VERIFY

@@ -1,0 +1,26 @@
+# {{ ansible_managed }}
+[user]
+    name = {{ gitconfig_user_name }}
+    email = {{ gitconfig_user_email }}
+    {% if gitconfig_signingkey is defined and gitconfig_signingkey != "" %}
+    signingkey = {{ gitconfig_signingkey }}
+    {% endif %}
+
+{% if gitconfig_signingkey is defined and gitconfig_signingkey != "" %}
+[gpg]
+    format = {{ gitconfig_signingkey_format }}
+[commit]
+    gpgsign = True
+{% endif %}
+
+[init]
+    defaultBranch = {{ gitconfig_init_defaultBranch }}
+[push]
+    autoSetupRemote = {{ gitconfig_push_autoSetupRemote |  capitalize }}
+        
+{% if gitconfig_aliases is defined and gitconfig_aliases | length > 0 %}
+[alias]
+{% for alias, command in gitconfig_aliases.items() %}
+    {{ alias }} = {{ command }}
+{% endfor %}
+{% endif %}

@@ -1,0 +1,13 @@
+---
+- name: Clone oh-my-zsh repository
+  ansible.builtin.git:
+    repo: "{{ ohmyzsh_repo }}"
+    dest: "{{ ohmyzsh_install_dir }}"
+    version: master
+    update: yes
+
+- name: Deploy oh-my-zsh snippet into .zshrc.d
+  ansible.builtin.template:
+    src: oh-my-zsh-snippet.zsh.j2
+    dest: "{{ ohmyzsh_d_dir }}/{{ ohmyzsh_snippet_filename }}"
+    mode: "0644"

@@ -1,0 +1,17 @@
+---
+extends: default
+
+rules:
+  # Disable line length checking
+  line-length: disable
+  
+  # Allow truthy values like "yes", "no", "on", "off"
+  truthy:
+    allowed-values: ['true', 'false', 'yes', 'no', 'on', 'off']
+  
+  # Allow comments to be longer
+  comments:
+    min-spaces-from-content: 1
+  
+  # Don't require document start
+  document-start: disable

@@ -1,0 +1,22 @@
+# {{ ansible_managed }}
+#
+# ZSH configuration file
+# This file sources all zsh configuration fragments
+# Custom files should be placed in {{ zsh_rc_d_dir }} which will be loaded 
+# in alphabetical order after ansible-managed snippets
+
+# Load ansible-managed zsh snippets
+if [ -d "{{ zsh_rc_d_ansible_managed_dir }}" ]; then
+  for f in "{{ zsh_rc_d_ansible_managed_dir }}"/*.zsh; do
+    [ -r "$f" ] && . "$f"
+  done
+  unset f
+fi
+
+# Load all user zsh fragment files
+if [ -d "{{ zsh_rc_d_dir }}" ]; then
+  for f in "{{ zsh_rc_d_dir }}"/*.zsh; do
+    [ -r "$f" ] && . "$f"
+  done
+  unset f
+fi

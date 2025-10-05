@@ -1,0 +1,15 @@
+# {{ ansible_managed }}
+# Oh My Zsh snippet loaded via .zshrc.d
+export OHMYZSHDIR="{{ ohmyzsh_install_dir }}"
+
+{% if ohmyzsh_theme is defined %}
+ZSH_THEME="{{ ohmyzsh_theme }}"
+{% endif %}
+
+{% if ohmyzsh_plugins is defined and ohmyzsh_plugins | length > 0 %}
+plugins=({{ ohmyzsh_plugins | join(' ') }})
+{% endif %}
+
+if [ -f "$OHMYZSHDIR/oh-my-zsh.sh" ]; then
+  source "$OHMYZSHDIR/oh-my-zsh.sh"
+fi

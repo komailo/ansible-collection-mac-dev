@@ -1,0 +1,27 @@
+---
+zshconfig_set_default_shell: true # attempt to set user's login shell to discovered zsh
+
+# Files to preserve in ansible-managed directory (list of filenames)
+# These files will not be deleted even if they don't have corresponding templates
+configure_zshconfig_preserve_files:
+  - "20-oh-my-zsh.zsh"
+# Example:
+# configure_zshconfig_preserve_files:
+#   - "custom.zsh"
+#   - "local-overrides.zsh"
+
+configure_zshconfig_aliases: false
+zshconfig_aliases: []
+# Example:
+# aliases:
+#   ll: "ls -alF"
+#   gs: "git status"
+#   gp: "git pull"
+
+zshconfig_github_login: true # Enable GitHub CLI login on shell startup
+
+# internal variables
+zsh_rc_path: "{{ ansible_user_dir }}/.zshrc"
+zsh_rc_d_dir: "{{ ansible_user_dir }}/.zshrc.d"
+zsh_rc_d_ansible_managed_dir: "{{ zsh_rc_d_dir }}/ansible-managed"
+zsh_path: /bin/zsh

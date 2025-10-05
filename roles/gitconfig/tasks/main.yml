@@ -1,0 +1,94 @@
+---
+# tasks file for gitconfig
+
+- name: Ensure ~/.gitconfig.d directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.gitconfig.d"
+    state: directory
+    mode: "0755"
+
+- name: Ensure ~/.gitconfig.d/ansible-managed directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.gitconfig.d/ansible-managed"
+    state: directory
+    mode: "0755"
+
+- name: Find template files in role
+  ansible.builtin.find:
+    paths: "{{ role_path }}/templates/gitconfigs"
+    patterns: "*.j2"
+  register: gitconfig_template_files
+  delegate_to: localhost
+  run_once: true
+
+- name: Create list of expected files in ansible-managed directory
+  ansible.builtin.set_fact:
+    expected_gitconfig_files: >-
+      {{
+        gitconfig_template_files.files |
+        map(attribute='path') |
+        map('basename') |
+        map('regex_replace', '\.j2$', '') |
+        list
+      }}
+
+- name: Find existing files in ansible-managed directory
+  ansible.builtin.find:
+    paths: "{{ ansible_env.HOME }}/.gitconfig.d/ansible-managed"
+    patterns: "*"
+  register: existing_ansible_managed_files
+
+- name: Remove files not managed by this role
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ existing_ansible_managed_files.files }}"
+  when: item.path | basename not in expected_gitconfig_files
+
+- name: Template gitconfig files to ansible-managed directory
+  ansible.builtin.template:
+    src: "gitconfigs/{{ item }}.j2"
+    dest: "{{ ansible_env.HOME }}/.gitconfig.d/ansible-managed/{{ item }}"
+    mode: "0644"
+    backup: yes
+  loop: "{{ expected_gitconfig_files }}"
+
+- name: Find all gitconfig files in ~/.gitconfig.d (excluding ansible-managed)
+  ansible.builtin.find:
+    paths: "{{ ansible_env.HOME }}/.gitconfig.d"
+    patterns: "*.gitconfig"
+    excludes: "ansible-managed"
+    file_type: file
+  register: user_gitconfig_files
+
+- name: Find all gitconfig files in ~/.gitconfig.d/ansible-managed
+  ansible.builtin.find:
+    paths: "{{ ansible_env.HOME }}/.gitconfig.d/ansible-managed"
+    patterns: "*"
+    file_type: file
+  register: ansible_managed_files
+
+- name: Create combined list of all gitconfig include paths
+  ansible.builtin.set_fact:
+    all_gitconfig_includes: >-
+      {{
+        (user_gitconfig_files.files | map(attribute='path') | list) +
+        (ansible_managed_files.files | map(attribute='path') | list)
+      }}
+
+- name: Generate include section for gitconfig
+  ansible.builtin.set_fact:
+    gitconfig_include_section: |
+      # Ansible Managed DO NOT EDIT
+
+      [include]
+      {% for include_path in all_gitconfig_includes | sort %}
+          path = {{ include_path }}
+      {% endfor %}
+
+- name: Create ~/.gitconfig with only include paths (Ansible managed)
+  ansible.builtin.copy:
+    content: "{{ gitconfig_include_section }}"
+    dest: "{{ ansible_env.HOME }}/.gitconfig"
+    mode: "0644"
+    backup: yes

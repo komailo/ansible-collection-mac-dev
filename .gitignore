@@ -1,0 +1,43 @@
+# Build artifacts
+*.tar.gz
+build/
+dist/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Ansible
+.ansible/
+*.retry
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test results
+tests/output/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Changelogs
+changelogs/.plugin-cache.yaml
+
+# Galaxy build ignore
+galaxy.yml.bak

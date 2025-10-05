@@ -1,0 +1,82 @@
+---
+# Sample playbook for setting up a Mac development environment
+# Usage: ansible-playbook -i localhost, setup-mac-dev.yml
+
+- name: Setup Mac Development Environment
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+
+  vars:
+    # Customize these variables according to your preferences
+    homebrew_packages:
+      - git
+      - vim
+      - curl
+      - wget
+      - tree
+      - jq
+      - htop
+
+    python_versions:
+      - "3.9"
+      - "3.10"
+      - "3.11"
+
+    node_version: "18"
+
+    vscode_extensions:
+      - ms-python.python
+      - ms-vscode.vscode-typescript-next
+      - bradlc.vscode-tailwindcss
+      - esbenp.prettier-vscode
+
+  collections:
+    - komailo.dev-env
+
+  tasks:
+    - name: Ensure we're running on macOS
+      assert:
+        that:
+          - ansible_os_family == "Darwin"
+        fail_msg: "This playbook is designed for macOS only"
+
+    - name: Setup Homebrew
+      include_role:
+        name: homebrew
+      vars:
+        homebrew_install_packages: "{{ homebrew_packages }}"
+
+    - name: Setup Python development environment
+      include_role:
+        name: python_dev
+      vars:
+        python_install_versions: "{{ python_versions }}"
+
+    - name: Setup Node.js development environment
+      include_role:
+        name: node_dev
+      vars:
+        nodejs_version: "{{ node_version }}"
+
+    - name: Setup VS Code
+      include_role:
+        name: vscode
+      vars:
+        vscode_install_extensions: "{{ vscode_extensions }}"
+
+    - name: Configure Git
+      include_role:
+        name: git_config
+
+    - name: Setup terminal environment
+      include_role:
+        name: terminal
+
+    - name: Deploy dotfiles
+      include_role:
+        name: dotfiles
+
+    - name: Install Docker
+      include_role:
+        name: docker

@@ -1,0 +1,32 @@
+namespace: komailo
+name: mac_dev
+version: 0.1.0
+readme: README.md
+authors:
+  - Komail Kanjee hey@komail.io
+description: >-
+  A comprehensive Ansible collection for setting up and configuring Mac-based development environments.
+  Includes roles for installing development tools, configuring dotfiles, setting up programming languages,
+  and automating the complete developer workflow setup on macOS.
+license:
+  - BSD-3-Clause
+license_file: "LICENSE"
+tags:
+  - development
+  - macos
+  - devenv
+  - homebrew
+  - dotfiles
+  - tools
+dependencies: {}
+repository: https://github.com/your-username/ansible-collection-dev
+documentation: https://github.com/your-username/ansible-collection-dev
+homepage: https://github.com/your-username/ansible-collection-dev
+issues: https://github.com/your-username/ansible-collection-dev/issues
+build_ignore:
+  - "*.tar.gz"
+  - ".git"
+  - ".gitignore"
+  - ".github"
+  - "tests/output"
+  - "changelogs/.plugin-cache.yaml"

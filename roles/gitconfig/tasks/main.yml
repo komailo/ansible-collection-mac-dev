@@ -50,7 +50,6 @@
     src: "gitconfigs/{{ item }}.j2"
     dest: "{{ ansible_env.HOME }}/.gitconfig.d/ansible-managed/{{ item }}"
     mode: "0644"
-    backup: yes
   loop: "{{ expected_gitconfig_files }}"
 
 - name: Find all gitconfig files in ~/.gitconfig.d (excluding ansible-managed)

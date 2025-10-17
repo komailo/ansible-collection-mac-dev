@@ -6,6 +6,7 @@ gitconfig_signingkey_format: "gpg"
 gitconfig_init_defaultBranch: "main"
 gitconfig_push_autoSetupRemote: true
 gitconfig_aliases: {}
+gitconfig_core_excludesfile: "{{ ansible_env.HOME }}/.config/git/gitignore"
 # Example:
 # gitconfig_aliases:
 #   co: "checkout"

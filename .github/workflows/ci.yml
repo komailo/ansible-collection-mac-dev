@@ -28,7 +28,7 @@ jobs:
           path: ansible_collections/devenv/mac_dev
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.9"
 
@@ -55,7 +55,7 @@ jobs:
           path: ansible_collections/devenv/mac_dev
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.9"
 
@@ -80,7 +80,7 @@ jobs:
           path: ansible_collections/devenv/mac_dev
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.9"
 
